@@ -1,0 +1,452 @@
+create azure kubernetes service cluster 
+
+- az provider register --namespace Microsoft.Insights
+- az provider show --namespace Microsoft.Insights --query "registrationState" --output 
+
+az aks create `
+  --resource-group Ram_RG `
+  --name ram-tree `
+  --node-vm-size Standard_D2as_v6 `
+  --node-count 2 `
+  --enable-addons monitoring `
+  --generate-ssh-keys `
+  --location eastus
+
+
+-----------------------------------------------------create a kubernetes cluster----------------------
+
+- local terminal 
+- create a file and git clone git reprository
+-  git clone https://github.com/ramesh1918s/Azure_Project_Three-tire_application.git
+
+
+----------------------------------------------------------------------connection az-cli------------------------------
+
+- az aks get-credentials --resource-group Ram_RG --name ram-tree
+
+- kubectl get nodes
+- kubectl cluster-info
+
+
+----------------install chocolatey -------------------------------------
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+- choco -v
+
+-----------------------------------------Helm install---------------------------------------------
+
+- choco install kubernetes-helm
+- helm version
+
+-
+kubectl create ns robot-shop
+
+- PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> helm install robot-shop --namespace robot-shop .
+NAME: robot-shop
+LAST DEPLOYED: Sat Dec  7 15:52:18 2024
+NAMESPACE: robot-shop
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+
+----------------------------------------------------------------------------------------------------
+
+
+
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n robot-shop
+NAME                         READY   STATUS              RESTARTS   AGE
+cart-78dbff49b-x47hx         1/1     Running             0          2m3s
+catalogue-7b4b777975-blnt7   1/1     Running             0          2m3s
+dispatch-7d4ff989d7-xhjtf    1/1     Running             0          2m3s
+mongodb-b487b86b6-pgnmc      1/1     Running             0          2m3s
+mysql-7c9bcd9464-l86k4       1/1     Running             0          2m3s
+payment-7474f4f69f-888fz     1/1     Running             0          2m3s
+rabbitmq-7bc9649444-t9628    1/1     Running             0          2m3s
+ratings-8c68dd6c5-rw6th      0/1     Running             0          2m2s
+redis-0                      0/1     ContainerCreating   0          2m3s
+shipping-5c899bdb6c-9gf8c    0/1     Running             0          2m3s
+user-596968bd87-79rvb        1/1     Running             0          2m3s
+web-6545b6c677-27jzb         1/1     Running             0          2m3s
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> helm install robot-shop --namespace robot-shop .
+NAME: robot-shop
+LAST DEPLOYED: Sat Dec  7 15:52:18 2024
+NAMESPACE: robot-shop
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n robot-shop
+NAME                         READY   STATUS              RESTARTS   AGE
+cart-78dbff49b-x47hx         1/1     Running             0          2m3s
+catalogue-7b4b777975-blnt7   1/1     Running             0          2m3s
+dispatch-7d4ff989d7-xhjtf    1/1     Running             0          2m3s
+mongodb-b487b86b6-pgnmc      1/1     Running             0          2m3s
+mysql-7c9bcd9464-l86k4       1/1     Running             0          2m3s
+payment-7474f4f69f-888fz     1/1     Running             0          2m3s
+rabbitmq-7bc9649444-t9628    1/1     Running             0          2m3s
+ratings-8c68dd6c5-rw6th      0/1     Running             0          2m2s
+redis-0                      0/1     ContainerCreating   0          2m3s
+shipping-5c899bdb6c-9gf8c    0/1     Running             0          2m3s
+user-596968bd87-79rvb        1/1     Running             0          2m3s
+web-6545b6c677-27jzb         1/1     Running             0          2m3s
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get describe pod redis-0 -n robot-shop
+error: the server doesn't have a resource type "describe"
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl describe pod redis-0 -n robot-shop
+Name:             redis-0
+Namespace:        robot-shop
+Priority:         0
+Service Account:  default
+Node:             aks-nodepool1-17060935-vmss000000/10.224.0.5
+Start Time:       Sat, 07 Dec 2024 15:52:34 +0530
+Labels:           apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=redis-57768f5d94
+                  service=redis
+                  statefulset.kubernetes.io/pod-name=redis-0
+Annotations:      <none>
+Status:           Pending
+IP:
+IPs:              <none>
+Controlled By:    StatefulSet/redis
+Containers:
+  redis:
+    Container ID:
+    Image:          redis:4.0.6
+    Image ID:
+    Port:           6379/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       ContainerCreating
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  100Mi
+    Requests:
+      cpu:        100m
+      memory:     50Mi
+    Environment:  <none>
+    Mounts:
+      /mnt/redis from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-r8sb7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False
+  Initialized                 True
+  Ready                       False
+  ContainersReady             False
+  PodScheduled                True
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-redis-0
+    ReadOnly:   false
+  kube-api-access-r8sb7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/memory-pressure:NoSchedule op=Exists
+                             node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason                  Age                   From                     Message
+  ----     ------                  ----                  ----                     -------
+  Normal   Scheduled               4m56s                 default-scheduler        Successfully assigned robot-shop/redis-0 to aks-nodepool1-17060935-vmss000000
+  Normal   SuccessfulAttachVolume  4m47s                 attachdetach-controller  AttachVolume.Attach succeeded for volume "pvc-10b6ed7c-ea1c-4015-90c5-d7fa98ab4e38"
+  Warning  FailedMount             26s (x10 over 4m46s)  kubelet                  MountVolume.MountDevice failed for volume "pvc-10b6ed7c-ea1c-4015-90c5-d7fa98ab4e38" : rpc error: code = Internal desc = failed to find disk on lun 0. azureDisk - findDiskByLun(0) failed with error(failed to find disk by lun 0)
+
+
+
+  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+  PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pvc -n robot-shop
+NAME           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+data-redis-0   Bound    pvc-10b6ed7c-ea1c-4015-90c5-d7fa98ab4e38   1Gi        RWO            default        <unset>                 8m53s
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm>
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+az aks update --resource-group Ram_RG --name ram-tree --enable-addons ingress-appgw
+
+
+
+
+- http://4.236.207.237:8080/login
+
+
+
+
+
+
+
+
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n kube-system
+NAME                                  READY   STATUS    RESTARTS        AGE
+ama-logs-ggcxz                        3/3     Running   1 (3h12m ago)   3h56m
+ama-logs-ljp2c                        3/3     Running   1 (3h44m ago)   3h56m
+ama-logs-rs-859f56c49c-vxs28          2/2     Running   0               3h56m
+azure-cns-557jm                       1/1     Running   0               3h57m
+azure-cns-gqhv4                       1/1     Running   0               3h57m
+azure-ip-masq-agent-dvwjk             1/1     Running   0               3h57m
+azure-ip-masq-agent-pnn9f             1/1     Running   0               3h57m
+cloud-node-manager-n5pbt              1/1     Running   0               3h57m
+cloud-node-manager-vlpg2              1/1     Running   0               3h57m
+coredns-54b69f46b8-c5mjk              1/1     Running   0               3h57m
+coredns-54b69f46b8-nvv5v              1/1     Running   0               3h56m
+coredns-autoscaler-bfcb7c74c-4zn48    1/1     Running   0               3h57m
+csi-azuredisk-node-7h5kf              3/3     Running   0               3h57m
+csi-azuredisk-node-z5hv9              3/3     Running   0               3h57m
+csi-azurefile-node-fblx2              3/3     Running   0               3h57m
+csi-azurefile-node-s255x              3/3     Running   0               3h57m
+konnectivity-agent-64c6579f88-78knr   1/1     Running   0               3h55m
+konnectivity-agent-64c6579f88-mmcvc   1/1     Running   0               3h55m
+kube-proxy-7dd68                      1/1     Running   0               3h57m
+kube-proxy-drth8                      1/1     Running   0               3h57m
+metrics-server-7d95c7bd8d-5qzv6       2/2     Running   0               3h56m
+metrics-server-7d95c7bd8d-kdc4w       2/2     Running   0               3h56m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm>
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n kube-system
+NAME                                  READY   STATUS    RESTARTS        AGE
+ama-logs-ggcxz                        3/3     Running   1 (3h30m ago)   4h13m
+ama-logs-ljp2c                        3/3     Running   1 (4h1m ago)    4h13m
+ama-logs-rs-859f56c49c-vxs28          2/2     Running   0               4h13m
+azure-cns-557jm                       1/1     Running   0               4h14m
+azure-cns-gqhv4                       1/1     Running   0               4h14m
+azure-ip-masq-agent-dvwjk             1/1     Running   0               4h14m
+azure-ip-masq-agent-pnn9f             1/1     Running   0               4h14m
+cloud-node-manager-n5pbt              1/1     Running   0               4h14m
+cloud-node-manager-vlpg2              1/1     Running   0               4h14m
+coredns-54b69f46b8-c5mjk              1/1     Running   0               4h14m
+coredns-54b69f46b8-nvv5v              1/1     Running   0               4h14m
+coredns-autoscaler-bfcb7c74c-4zn48    1/1     Running   0               4h14m
+csi-azuredisk-node-7h5kf              3/3     Running   0               4h14m
+csi-azuredisk-node-z5hv9              3/3     Running   0               4h14m
+csi-azurefile-node-fblx2              3/3     Running   0               4h14m
+csi-azurefile-node-s255x              3/3     Running   0               4h14m
+konnectivity-agent-64c6579f88-78knr   1/1     Running   0               4h12m
+konnectivity-agent-64c6579f88-mmcvc   1/1     Running   0               4h12m
+kube-proxy-7dd68                      1/1     Running   0               4h14m
+kube-proxy-drth8                      1/1     Running   0               4h14m
+metrics-server-7d95c7bd8d-5qzv6       2/2     Running   0               4h14m
+metrics-server-7d95c7bd8d-kdc4w       2/2     Running   0               4h14m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n kube-system
+NAME                                  READY   STATUS    RESTARTS        AGE
+ama-logs-ggcxz                        3/3     Running   1 (3h37m ago)   4h20m
+ama-logs-ljp2c                        3/3     Running   1 (4h8m ago)    4h20m
+ama-logs-rs-859f56c49c-vxs28          2/2     Running   0               4h20m
+azure-cns-557jm                       1/1     Running   0               4h21m
+azure-cns-gqhv4                       1/1     Running   0               4h21m
+azure-ip-masq-agent-dvwjk             1/1     Running   0               4h21m
+azure-ip-masq-agent-pnn9f             1/1     Running   0               4h21m
+cloud-node-manager-n5pbt              1/1     Running   0               4h21m
+cloud-node-manager-vlpg2              1/1     Running   0               4h21m
+coredns-54b69f46b8-c5mjk              1/1     Running   0               4h21m
+coredns-54b69f46b8-nvv5v              1/1     Running   0               4h21m
+coredns-autoscaler-bfcb7c74c-4zn48    1/1     Running   0               4h21m
+csi-azuredisk-node-7h5kf              3/3     Running   0               4h21m
+csi-azuredisk-node-z5hv9              3/3     Running   0               4h21m
+csi-azurefile-node-fblx2              3/3     Running   0               4h21m
+csi-azurefile-node-s255x              3/3     Running   0               4h21m
+konnectivity-agent-64c6579f88-78knr   1/1     Running   0               4h19m
+konnectivity-agent-64c6579f88-mmcvc   1/1     Running   0               4h19m
+kube-proxy-7dd68                      1/1     Running   0               4h21m
+kube-proxy-drth8                      1/1     Running   0               4h21m
+metrics-server-7d95c7bd8d-5qzv6       2/2     Running   0               4h21m
+metrics-server-7d95c7bd8d-kdc4w       2/2     Running   0               4h21m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n kube-system
+NAME                                  READY   STATUS    RESTARTS        AGE
+ama-logs-ggcxz                        3/3     Running   1 (3h50m ago)   4h33m
+ama-logs-ljp2c                        3/3     Running   1 (4h21m ago)   4h33m
+ama-logs-rs-859f56c49c-vxs28          2/2     Running   0               4h33m
+azure-cns-557jm                       1/1     Running   0               4h34m
+azure-cns-gqhv4                       1/1     Running   0               4h34m
+azure-ip-masq-agent-dvwjk             1/1     Running   0               4h34m
+azure-ip-masq-agent-pnn9f             1/1     Running   0               4h34m
+cloud-node-manager-n5pbt              1/1     Running   0               4h34m
+cloud-node-manager-vlpg2              1/1     Running   0               4h34m
+coredns-54b69f46b8-c5mjk              1/1     Running   0               4h34m
+coredns-54b69f46b8-nvv5v              1/1     Running   0               4h33m
+coredns-autoscaler-bfcb7c74c-4zn48    1/1     Running   0               4h34m
+csi-azuredisk-node-7h5kf              3/3     Running   0               4h34m
+csi-azuredisk-node-z5hv9              3/3     Running   0               4h34m
+csi-azurefile-node-fblx2              3/3     Running   0               4h34m
+csi-azurefile-node-s255x              3/3     Running   0               4h34m
+konnectivity-agent-64c6579f88-78knr   1/1     Running   0               4h32m
+konnectivity-agent-64c6579f88-mmcvc   1/1     Running   0               4h32m
+kube-proxy-7dd68                      1/1     Running   0               4h34m
+kube-proxy-drth8                      1/1     Running   0               4h34m
+metrics-server-7d95c7bd8d-5qzv6       2/2     Running   0               4h33m
+metrics-server-7d95c7bd8d-kdc4w       2/2     Running   0               4h33m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n kube-system
+NAME                                  READY   STATUS    RESTARTS        AGE
+ama-logs-ggcxz                        3/3     Running   1 (4h1m ago)    4h44m
+ama-logs-ljp2c                        3/3     Running   1 (4h32m ago)   4h44m
+ama-logs-rs-859f56c49c-vxs28          2/2     Running   0               4h44m
+azure-cns-557jm                       1/1     Running   0               4h45m
+azure-cns-gqhv4                       1/1     Running   0               4h45m
+azure-ip-masq-agent-dvwjk             1/1     Running   0               4h45m
+azure-ip-masq-agent-pnn9f             1/1     Running   0               4h45m
+cloud-node-manager-n5pbt              1/1     Running   0               4h45m
+cloud-node-manager-vlpg2              1/1     Running   0               4h45m
+coredns-54b69f46b8-c5mjk              1/1     Running   0               4h45m
+coredns-54b69f46b8-nvv5v              1/1     Running   0               4h45m
+coredns-autoscaler-bfcb7c74c-4zn48    1/1     Running   0               4h45m
+csi-azuredisk-node-7h5kf              3/3     Running   0               4h45m
+csi-azuredisk-node-z5hv9              3/3     Running   0               4h45m
+csi-azurefile-node-fblx2              3/3     Running   0               4h45m
+csi-azurefile-node-s255x              3/3     Running   0               4h45m
+konnectivity-agent-64c6579f88-78knr   1/1     Running   0               4h43m
+konnectivity-agent-64c6579f88-mmcvc   1/1     Running   0               4h43m
+kube-proxy-7dd68                      1/1     Running   0               4h45m
+kube-proxy-drth8                      1/1     Running   0               4h45m
+metrics-server-7d95c7bd8d-5qzv6       2/2     Running   0               4h45m
+metrics-server-7d95c7bd8d-kdc4w       2/2     Running   0               4h45m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get pods -n kube-system
+NAME                                  READY   STATUS    RESTARTS        AGE
+ama-logs-ggcxz                        3/3     Running   1 (4h10m ago)   4h54m
+ama-logs-ljp2c                        3/3     Running   1 (4h42m ago)   4h54m
+ama-logs-rs-859f56c49c-vxs28          2/2     Running   0               4h54m
+azure-cns-557jm                       1/1     Running   0               4h54m
+azure-cns-gqhv4                       1/1     Running   0               4h54m
+azure-ip-masq-agent-dvwjk             1/1     Running   0               4h54m
+azure-ip-masq-agent-pnn9f             1/1     Running   0               4h54m
+cloud-node-manager-n5pbt              1/1     Running   0               4h54m
+cloud-node-manager-vlpg2              1/1     Running   0               4h54m
+coredns-54b69f46b8-c5mjk              1/1     Running   0               4h54m
+coredns-54b69f46b8-nvv5v              1/1     Running   0               4h54m
+coredns-autoscaler-bfcb7c74c-4zn48    1/1     Running   0               4h54m
+csi-azuredisk-node-7h5kf              3/3     Running   0               4h54m
+csi-azuredisk-node-z5hv9              3/3     Running   0               4h54m
+csi-azurefile-node-fblx2              3/3     Running   0               4h54m
+csi-azurefile-node-s255x              3/3     Running   0               4h54m
+konnectivity-agent-64c6579f88-78knr   1/1     Running   0               4h53m
+konnectivity-agent-64c6579f88-mmcvc   1/1     Running   0               4h53m
+kube-proxy-7dd68                      1/1     Running   0               4h54m
+kube-proxy-drth8                      1/1     Running   0               4h54m
+metrics-server-7d95c7bd8d-5qzv6       2/2     Running   0               4h54m
+metrics-server-7d95c7bd8d-kdc4w       2/2     Running   0               4h54m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get ing -n robot-shop
+NAME         CLASS                       HOSTS   ADDRESS   PORTS   AGE
+robot-shop   azure-application-gateway   *                 80      66m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> $publicIpName = "Ram_Ip"
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> $resourceGroupName = "Ram_RG"
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm>
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> # Get the public IP address
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> $publicIp = az network public-ip show
+ `
+>>     --name $publicIpName `
+>>     --resource-group $resourceGroupName `
+>>     --query "ipAddress" `
+>>     --output tsv
+ERROR: (ResourceNotFound) The Resource 'Microsoft.Network/publicIPAddresses/Ram_Ip' under resource group 'Ram_RG' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+Code: ResourceNotFound
+Message: The Resource 'Microsoft.Network/publicIPAddresses/Ram_Ip' under resource group 'Ram_RG' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm>
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> # Output the public IP address
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> $publicIp
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> kubectl get ing -n robot-shop
+NAME         CLASS                       HOSTS   ADDRESS   PORTS   AGE
+robot-shop   azure-application-gateway   *                 80      79m
+PS C:\Users\91915\My_Project\Azure_Project\Azure_Project_Three-tire_application\three-tier-architecture-demo\AKS\helm> history
+
+  Id CommandLine
+  -- -----------
+   1 helm version
+   2 ls
+   3 cd My_Project
+   4 ls
+   5 cd  Azure_Project
+   6 ls
+   7 cd Azure_Project_Three-tire_application
+   8 ls
+   9 cd three-tier-architecture-demo
+  10 ls
+  11 cd AKS
+  12 ls
+  13 cd  helm
+  14 ls
+  15 helm install robot-shop --namespace robot-shop
+  16 helm install robot-shop --namespace robot-shop my-robot-shop
+  17 kubectl create ns robot-shop
+  18 helm install robot-shop --namespace robot-shop
+  19 helm install robot-shop --namespace robot-shop my-robot-shop
+  20 helm install robot-shop --namespace robot-shop --generate-name
+  21 helm repo add robot-shop-repo https://some-helm-repository-url
+  22 helm repo update
+  23 helm repo add robot-shop-repo https://some-helm-repository-url
+  24 helm repo update
+  25 helm repo add robot-shop-repo https://example.com/robot-shop-repo
+  26 helm repo update
+  27 helm install my-robot-shop ./robot-shop --namespace robot-shop
+  28 helm install robot-shop --namespace robot-shop
+  29 helm install robot-shop --namespace robot-shop --generate-name
+  30 helm repo add robot-shop-repo https://charts.robotshop.io
+  31 helm repo update
+  32 helm repo add stable https://charts.helm.sh/stable
+  33 helm repo update
+  34 helm repo add robot-shop-repo https://charts.robotshop.io
+  35 helm repo update
+  36 helm repo list
+  37 helm install my-robot-shop robot-shop-repo/robot-shop --namespace robot-shop
+  38 helm repo list
+  39 helm search repo stable
+  40 helm install my-robot-shop stable/robot-shop --namespace robot-shop
+  41 helm search repo stable
+  42 helm install robot-shop --namespace robot-shop
+  43 kubectl get storageclass
+  44 kubectl get pods -n robot-shop
+  45 kubectl create ns robot
+  46 helm install robot --namespace robot.
+  47 helm install --generate-name robot-shop --namespace robot
+  48 ls
+  49 ls -al
+  50 s -al
+  51 kubectl get ns
+  52 helm install robot-shop --namespace robot-shop
+  53 helm install robot-shop --namespace robot-shop .
+  54 kubectl get pods -n robot-shop
+  55 kubectl get describe pod redis-0 -n robot-shop
+  56 kubectl describe pod redis-0 -n robot-shop
+  57 kubectl edit pod redis-0 -n robot-shop
+  58 kubectl get pvc -n robot-shop
+  59 kubectl get pods
+  60 kubectl get pods -n robot-shop
+  61 kubectl get svc -n robot-shop
+  62 kubectl get svc -n robot-shop
+  63 vim ingress.yml
+  64 vim ingress.yaml
+  65 cat ingress.yaml
+  66 kubectl get svc -n robot-shop
+  67 kubectl apply -f ingress.ymal -n robot-shop
+  68 kubectl apply -f ingress.yaml -n robot-shop
+  69 kubectl get pods -A | grep ingress-appgateway
+  70 kubectl get pods -A | Select-String "ingress-appgateway"
+  71 kubectl get pods -n kube-system
+  72 az login
+  73 ping 20.62.179.31
+  74 kubectl get pods -n kube-system
+  75 kubectl get pods -n kube-system
+  76 kubectl get pods -n kube-system
+  77 kubectl get pods -n kube-system
+  78 kubectl get pods -n kube-system
+  79 kubectl get pods -n kube-system
+  80 kubectl get ing -n robot-shop
+  81 $publicIpName = "Ram_Ip"
+  82 $resourceGroupName = "Ram_RG"
+  83 # Get the public IP address
+  84 $publicIp = az network public-ip show `...
+  85 # Output the public IP address
+  86 $publicIp
+  87 kubectl get ing -n robot-shop
